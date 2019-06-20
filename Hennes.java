@@ -4,43 +4,49 @@ import java.io.*;
 
 public class Hennes {
 
-   public static void main(String[] args) throws FileNotFoundException {
+   public static void main(String[] args) throws FileNotFoundException, IOException{
       Scanner console = new Scanner(System.in);
       getDate d = new getDate();
-      PrintStream log = new PrintStream("log.txt");
+      FileWriter output = new FileWriter("c:/Users/Bruce/Documents/University of Washington (UW) Year 1/Spring Quarter/CSE142/HMprogram/log.txt", true); //Set true for append mode
+      PrintWriter log = new PrintWriter(output);
       
       int[] hoursLog = new int[1];
       int[] moodLog = new int[5];
+      int[] shiftCount = new int[1];
       
       log.println(d.date());
       System.out.println("Hello, Bruce. Today is " + d.date());
       System.out.println();
-      System.out.println("(C)reate new entry | (V)iew logs | (E)nd");
+      System.out.println("(C)reate new entry :: (V)iew logs :: (E)nd");
+      System.out.println();
       System.out.print("What would you like to do? ");
       
       String answer = console.nextLine();
       while (!answer.equalsIgnoreCase("e")) {
       
          if (answer.equalsIgnoreCase("c")) {
-            create(console, log, moodLog, hoursLog);
+            create(console, log, moodLog, hoursLog, shiftCount);
          } else if (answer.equalsIgnoreCase("v")) {
-            view(console, moodLog);
+            view(console, moodLog, hoursLog, shiftCount);
          }
-         
-         System.out.println("(C)reate new entry | (V)iew logs | (E)nd");
+         System.out.println();
+         System.out.println("(C)reate new entry :: (V)iew logs :: (E)nd");
+         System.out.println();
          System.out.print("What would you like to do next? ");
          answer = console.nextLine();
       }
+      System.out.println();
       System.out.println("See you next time! :D");
    }
    
-   
-   public static void create(Scanner console, PrintStream log, int[] moodLog, int[] hoursLog) {
-      
-      System.out.println("How many hours did you work today? ");
+
+   public static void create(Scanner console, PrintWriter log, int[] moodLog, int[] hoursLog, int[] shiftCount) {
+
+      shiftCount[0] ++;
+      System.out.print("How many hours did you work today? ");
       int hours = console.nextInt();
       hoursLog[0] += hours;
-      log.println("Hours: " + hours);
+      log.println("     Hours: " + hours);
       
       System.out.print("What was work like today? (Enter 1-4) ");
       int mood = console.nextInt();
@@ -49,9 +55,11 @@ public class Hennes {
          mood = console.nextInt();
       }
       moodLog[mood - 1] += 1;
-      log.println("Mood: " + mood);
+      log.println("      Mood: " + mood + "/4");
       
-      if (mood == 1 || mood == 2) {
+      if (mood == 1) {
+         System.out.print("Man, today must have been awful, want to rant about it? ");
+      } else if (mood == 2) {
          System.out.print("Aww, looks like the day didn't go too well :( What happened? ");
       } else if (mood == 3) {
          System.out.print("What made today good? ");
@@ -59,17 +67,21 @@ public class Hennes {
          System.out.print("Wow! Today must have been awesome! What happened? ");
       }
       
+      console.nextLine();
       String comment = console.nextLine();
-      log.println("Comments: " + comment);
-
+      log.println("  Comments: " + comment);
+      log.println("---");
+      log.close();
    }
    
    
    public static String viewMenu(Scanner console) {
+      System.out.println();
       System.out.println("What would you like to view?");
+      System.out.println();
       System.out.println("(O)verall log");
       System.out.println("(M)ood log");
-      System.out.println("(H)ours log");
+      System.out.println("(H)ours & Money log");
       System.out.println();
       System.out.println("(G)o back");
       
@@ -79,34 +91,48 @@ public class Hennes {
    }
    
    
-   public static void view(Scanner console, int[] moodLog) {
+   public static void view(Scanner console, int[] moodLog, int[] hoursLog, int[] shiftCount) throws FileNotFoundException {
+      int badDays = moodLog[0] + moodLog[1];
+      double avgHours = (double) hoursLog[0] / shiftCount[0];
+      double moneyMade = (double) hoursLog[0] * 12.50;
+      File view = new File("log.txt");
+      
       String answer = viewMenu(console);
       System.out.println();
       while (!answer.equalsIgnoreCase("g")) {
-         if (answer.equalsIgnoreCase("o")) {
-            Scanner output = new Scanner("log.txt");
-            System.out.println();
-            
-            while (output.hasNextLine()) {
-               System.out.println(output.nextLine());
-            }
-            
-            System.out.println("Type 'd' when done");
-            
-         } else if (answer.equalsIgnoreCase("m")) {
-               System.out.println("   Mood Log");
-               System.out.println("Number of 'amazing' days: " + moodLog[3]);
-               System.out.println("Number of 'good' days: " + moodLog[2]);
-               System.out.println("Number of 'bad' days: " + moodLog[0] + moodLog[1]);
+         while (!answer.equalsIgnoreCase("d")) {
+         
+            if (answer.equalsIgnoreCase("o")) {
+               Scanner output = new Scanner(view);
+               System.out.println();
                
-               System.out.print("Type 'd' when done");
-         } else if (answer.equalsIgnoreCase("d")) {
-               answer = viewMenu(console);
-
-         } else {
-               System.out.println("   Hours");
+               while (output.hasNextLine()) {
+                  System.out.println(output.nextLine());
+               }
+               
+               System.out.println("Type 'd' when done");
+               answer = console.nextLine();
+               
+            } else if (answer.equalsIgnoreCase("m")) {
+                  System.out.println("   Mood Log");
+                  System.out.println("Number of 'amazing' days: " + moodLog[3]);
+                  System.out.println("Number of 'good' days: " + moodLog[2]);
+                  System.out.println("Number of 'bad' days: " + badDays);
+                  
+                  System.out.print("Type 'd' when done ");
+                  answer = console.nextLine();
+            } else {
+                  System.out.println("   Hours");
+                  System.out.println("Total hours: " + hoursLog[0]);
+                  System.out.println("Average hours worked: " + avgHours);
+                  System.out.println();
+                  System.out.println("Total Money Made: $" + moneyMade);
+                  
+                  System.out.print("Type 'd' when done ");
+                  answer = console.nextLine();
+            }
          }
-
+         answer = viewMenu(console);
       }
    }
 }
