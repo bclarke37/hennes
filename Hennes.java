@@ -5,11 +5,16 @@ import java.io.*;
 public class Hennes {
 
    public static void main(String[] args) throws FileNotFoundException, IOException{
+      File view = new File("log.txt");
       Scanner console = new Scanner(System.in);
+      Scanner output = new Scanner(view);
+            
       getDate d = new getDate();
+      
       FileWriter output = new FileWriter("c:/Users/Bruce/Documents/University of Washington (UW) Year 1/Spring Quarter/CSE142/HMprogram/log.txt", true); //Set true for append mode
       PrintWriter log = new PrintWriter(output);
       
+
       int[] hoursLog = new int[1];
       int[] moodLog = new int[5];
       int[] shiftCount = new int[1];
@@ -27,8 +32,9 @@ public class Hennes {
          if (answer.equalsIgnoreCase("c")) {
             create(console, log, moodLog, hoursLog, shiftCount);
          } else if (answer.equalsIgnoreCase("v")) {
-            view(console, moodLog, hoursLog, shiftCount);
+            view(console, moodLog, hoursLog, shiftCount, view, output);
          }
+         
          System.out.println();
          System.out.println("(C)reate new entry :: (V)iew logs :: (E)nd");
          System.out.println();
@@ -36,7 +42,7 @@ public class Hennes {
          answer = console.nextLine();
       }
       System.out.println();
-      System.out.println("See you next time! :D");
+      System.out.println("   See you next time! :D");
    }
    
 
@@ -74,6 +80,9 @@ public class Hennes {
       log.close();
    }
    
+   public static int cumHours () {
+      
+   }
    
    public static String viewMenu(Scanner console) {
       System.out.println();
@@ -91,11 +100,9 @@ public class Hennes {
    }
    
    
-   public static void view(Scanner console, int[] moodLog, int[] hoursLog, int[] shiftCount) throws FileNotFoundException {
-      int badDays = moodLog[0] + moodLog[1];
-      double avgHours = (double) hoursLog[0] / shiftCount[0];
-      double moneyMade = (double) hoursLog[0] * 12.50;
-      File view = new File("log.txt");
+   public static void view(Scanner console, File view, Scanner output) throws FileNotFoundException {
+//       double avgHours = (double) hoursLog[0] / shiftCount[0];
+//       double moneyMade = (double) hoursLog[0] * 12.50;
       
       String answer = viewMenu(console);
       System.out.println();
@@ -103,23 +110,22 @@ public class Hennes {
          while (!answer.equalsIgnoreCase("d")) {
          
             if (answer.equalsIgnoreCase("o")) {
-               Scanner output = new Scanner(view);
                System.out.println();
                
                while (output.hasNextLine()) {
                   System.out.println(output.nextLine());
                }
                
-               System.out.println("Type 'd' when done");
+               System.out.print("   Type 'd' when done");
                answer = console.nextLine();
                
             } else if (answer.equalsIgnoreCase("m")) {
                   System.out.println("   Mood Log");
-                  System.out.println("Number of 'amazing' days: " + moodLog[3]);
-                  System.out.println("Number of 'good' days: " + moodLog[2]);
-                  System.out.println("Number of 'bad' days: " + badDays);
+                  System.out.println("Number of 'amazing' days: ");
+                  System.out.println("Number of 'good' days: ");
+                  System.out.println("Number of 'bad' days: ");
                   
-                  System.out.print("Type 'd' when done ");
+                  System.out.print("   Type 'd' when done ");
                   answer = console.nextLine();
             } else {
                   System.out.println("   Hours");
@@ -128,7 +134,7 @@ public class Hennes {
                   System.out.println();
                   System.out.println("Total Money Made: $" + moneyMade);
                   
-                  System.out.print("Type 'd' when done ");
+                  System.out.print("   Type 'd' when done ");
                   answer = console.nextLine();
             }
          }
